@@ -39,7 +39,7 @@ const upload = multer({ storage }) //this variables wil be used when we want to 
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001
-mongoose.connect(process.env.MONGOOSE_URL, {
+mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 }).then(()=>{
