@@ -43,3 +43,31 @@ export const register = async (req, res)=> {
         res.status(500).json({error: err.message})
     }
 }
+
+/* LOGGIN IN FUNCTION*/
+export const login = async (req, res) => {
+    try{
+        const { email, password } = req.body
+        const user = await User.findOne({ email: email }) //using mongoose to find user with that email
+
+        if(!user){
+            return res.status(400).json({msg: "User does not exist."}) //if improper email is put in
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password) //comparing the password sent in with the one in database
+        if(!isMatch){
+            return res.status(400).json({msg: "Invalid credentials."}) //if improper email is put in
+        }
+
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+
+        delete user.password
+        res.status(200).json({ token, user})
+
+
+    }catch(err){
+        res.status(500).json({error: err.message})
+    }
+}
+
+export default ()=>{}

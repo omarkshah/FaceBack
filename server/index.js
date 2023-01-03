@@ -8,7 +8,15 @@ import helmet from "helmet"
 import morgan from "morgan"
 import path from "path" // already comes with node
 import { fileURLToPath } from "url"
-import register from "./controller/auth.js"
+import authRoutes from "./routes/auth.js"
+import userRoutes from "./routes/users.js"
+import postRoutes from "./routes/posts.js"
+import register from "./controllers/auth.js"
+import { createPost } from "./controllers/posts.js"
+import { verifyToken } from "./middleware/auth.js"
+import User from "./models/User.js"
+import Post from "./models/Post.js"
+import {users, posts} from "./data/index.js"
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url)
@@ -18,7 +26,7 @@ dotenv.config(); // so we can use dotenv files (for environment variables)
 const app = express()
 //all the middleware stuff
 app.use(express.json())
-app.use(helmet())
+app.use(helmet()) 
 app.use(helmet.crossOriginResourcePolicy({ policy : "cross-origin"}))
 app.use(morgan("common"))
 app.use(bodyParser.json({limit: "30mb", extended: true}))
@@ -36,11 +44,16 @@ const storage = multer.diskStorage({
     }
 })
 
+const upload = multer({ storage }) //this variables wil be used when we want to upload a file
+
 /* ROUTES WITH FILES */
 app.post("/auth.register", upload.single("picture"), register)
+app.post("/posts", verifyToken, upload.single("picture"), createPost)
 
-
-const upload = multer({ storage }) //this variables wil be used when we want to upload a file
+/* ROUTES */
+app.use("/auth", authRoutes)
+app.use("/users", userRoutes)
+app.use("/posts", postRoutes)
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001
@@ -49,4 +62,9 @@ mongoose.connect(process.env.MONGO_URL, {
     useUnifiedTopology: true,
 }).then(()=>{
     app.listen(PORT, ()=> console.log(`Server Port: ${PORT}`))
-}).catch((error)=>{console.log("Error: did not connect")})
+    
+    /*Adding test data manually */
+    // User.insertMany(users)
+    // Post.insertMany(posts)
+
+}).catch((error)=>{console.log("Error: did not connect " + error.message)})
