@@ -21,7 +21,7 @@ function App() {
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route
-              path="/home" element={<HomePage />}
+              path="/home" element={isAuth ? <HomePage /> : <Navigate to="/" />}
             
             />
             <Route
