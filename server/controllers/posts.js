@@ -33,12 +33,16 @@ export const createPost = async (req, res) => {
 
 /* READ FUNCTIONS*/
 export const getFeedPosts = async(req, res) => {
+   
+    
     try{
+        console.log("TRYING")
         const post = await Post.find()
         res.status(200).json(post)
  
     
     }catch(err){
+        console.log("TRYING 404")
         res.status(404).json({ message: err.message })
     }
 }

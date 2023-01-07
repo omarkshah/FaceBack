@@ -5,7 +5,7 @@ import { verifyToken } from "../middleware/auth.js";
 const router = express.Router()
 
 /* READ */
-router.get("/", verifyToken, getFeedPosts) //gets the user feed when we are on the home page
+router.get("/", getFeedPosts) //gets the user feed when we are on the home page
 
 router.get("/:userId/posts", verifyToken, getUserPosts) //gets the relevant user's posts
 
